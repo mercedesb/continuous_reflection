@@ -28,3 +28,6 @@
 
 # Ignore spec analysis
 spec/examples.txt
+
+# Ignore env files
+.env

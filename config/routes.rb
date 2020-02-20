@@ -8,4 +8,6 @@ Rails.application.routes.draw do
   defaults format: :json do
     resources :home, only: [:index]
   end
+
+  get '/auth/github', to: 'authentication#github', format: false
 end
