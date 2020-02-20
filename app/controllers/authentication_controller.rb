@@ -5,21 +5,21 @@ class AuthenticationController < ApplicationController
     authenticator = Authenticator.new
     user_info = authenticator.github(params[:code])
 
-    login = user_info[:login]
+    username = user_info[:login]
     name = user_info[:name]
-    avatar_url = user_info[:avatar_url]
+    # avatar_url = user_info[:avatar_url]
 
     # Generate token...
-    token = AuthToken.encode(login)
+    token = AuthToken.encode(username)
     # ... create user if it doesn't exist...
-    User.where(login: login).first_or_create!(
-      name: name,
-      avatar_url: avatar_url
+    User.where(username: username).first_or_create!(
+      name: name
+      # avatar_url: avatar_url
     )
     # ... and redirect to client app.
     redirect_to "#{issuer}?token=#{token}"
   rescue StandardError => e
-    redirect_to "#{issuer}?error=#{e.message}"
+    redirect_to "#{issuer}?error=Unable to login #{username}"
   end
 
   private
