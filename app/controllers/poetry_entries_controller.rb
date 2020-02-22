@@ -50,6 +50,6 @@ class PoetryEntriesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def poetry_entry_params
-    params.fetch(:poetry_entry, {}).permit(:title, :poem)
+    params.fetch(:poetry_entry, {}).permit(:title, :poem, journal_entry_attributes: %i[journal_id])
   end
 end

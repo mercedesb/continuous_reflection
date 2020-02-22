@@ -10,8 +10,10 @@ RSpec.describe PoetryEntriesController, type: :controller do
   let(:current_user) { create(:user) }
   let(:jwt) { AuthToken.encode(current_user.username) }
 
-  let(:valid_attributes) { attributes_for(:poetry_entry) }
-  let(:invalid_attributes) { attributes_for(:poetry_entry).merge!(title: nil) }
+  let(:journal) { create(:journal, :poetry) }
+
+  let(:valid_attributes) { attributes_for(:poetry_entry).merge!(journal_entry_attributes: { journal_id: journal.id }) }
+  let(:invalid_attributes) { attributes_for(:poetry_entry).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id }) }
 
   describe "GET #index" do
     let!(:poetry_entry) { create(:poetry_entry) }

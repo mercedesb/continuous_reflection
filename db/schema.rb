@@ -10,16 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_22_032059) do
+ActiveRecord::Schema.define(version: 2020_02_22_144518) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "journal_entries", force: :cascade do |t|
+    t.integer "journal_id", null: false
+    t.string "content_type", null: false
+    t.integer "content_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "journals", force: :cascade do |t|
     t.string "name", null: false
     t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "template", null: false
   end
 
   create_table "poetry_entries", force: :cascade do |t|
@@ -47,5 +56,6 @@ ActiveRecord::Schema.define(version: 2020_02_22_032059) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "journal_entries", "journals"
   add_foreign_key "journals", "users"
 end

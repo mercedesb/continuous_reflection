@@ -17,7 +17,6 @@ class JournalsController < ApplicationController
   # POST /journals.json
   def create
     @journal = Journal.new(journal_params)
-
     if @journal.save
       render :show, status: :created, location: @journal
     else
@@ -50,6 +49,6 @@ class JournalsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def journal_params
-    params.fetch(:journal, {}).permit(:name, :user_id)
+    params.fetch(:journal, {}).permit(:name, :user_id, :template)
   end
 end

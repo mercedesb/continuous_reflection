@@ -50,6 +50,6 @@ class ProfessionalDevelopmentEntriesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def professional_development_entry_params
-    params.fetch(:professional_development_entry, {}).permit(:title, :mood, :today_i_learned, :goal_progress, :celebrations)
+    params.fetch(:professional_development_entry, {}).permit(:title, :mood, :today_i_learned, :goal_progress, :celebrations, journal_entry_attributes: %i[journal_id])
   end
 end

@@ -10,8 +10,10 @@ RSpec.describe ProfessionalDevelopmentEntriesController, type: :controller do
   let(:current_user) { create(:user) }
   let(:jwt) { AuthToken.encode(current_user.username) }
 
-  let(:valid_attributes) { attributes_for(:professional_development_entry) }
-  let(:invalid_attributes) { attributes_for(:professional_development_entry).merge!(title: nil) }
+  let(:journal) { create(:journal, :professional_development) }
+
+  let(:valid_attributes) { attributes_for(:professional_development_entry).merge!(journal_entry_attributes: { journal_id: journal.id }) }
+  let(:invalid_attributes) { attributes_for(:professional_development_entry).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id }) }
 
   describe "GET #index" do
     let!(:professional_development_entry) { create(:professional_development_entry) }

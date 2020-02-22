@@ -14,8 +14,10 @@ RSpec.describe "ProfessionalDevelopmentEntries", type: :request do
   let(:jwt) { AuthToken.encode(current_user.username) }
   let(:json) { JSON.parse(response.body) }
 
-  let(:valid_attributes) { attributes_for(:professional_development_entry) }
-  let(:invalid_attributes) { attributes_for(:professional_development_entry).merge!(title: nil) }
+  let(:journal) { create(:journal, :professional_development) }
+
+  let(:valid_attributes) { attributes_for(:professional_development_entry).merge!(journal_entry_attributes: { journal_id: journal.id }) }
+  let(:invalid_attributes) { attributes_for(:professional_development_entry).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id }) }
 
   describe "GET /professional_development_entries" do
     let!(:professional_development_entry) { create(:professional_development_entry) }
@@ -83,10 +85,44 @@ RSpec.describe "ProfessionalDevelopmentEntries", type: :request do
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the new professional_development_entry" do
-        post professional_development_entries_path, params: { professional_development_entry: invalid_attributes, token: jwt }, headers: headers
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to match(%r{application/json}i)
+      describe "when missing professional development entry data" do
+        it "renders a JSON response with errors for the new professional_development_entry" do
+          post professional_development_entries_path, params: { professional_development_entry: invalid_attributes, token: jwt }, headers: headers
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to match(%r{application/json}i)
+        end
+      end
+
+      describe "when missing journal_entry_attributes" do
+        it "renders a JSON response with errors for the new professional_development_entry" do
+          attributes = valid_attributes.except(:journal_entry_attributes)
+          post professional_development_entries_path, params: { professional_development_entry: attributes, token: jwt }, headers: headers
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to match(%r{application/json}i)
+          expect(response.body).to match(/journal can't be blank/i)
+        end
+      end
+
+      describe "when missing which journal to add it to" do
+        it "renders a JSON response with errors for the new professional_development_entry" do
+          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: nil })
+          post professional_development_entries_path, params: { professional_development_entry: attributes, token: jwt }, headers: headers
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to match(%r{application/json}i)
+          expect(response.body).to match(/must exist/i)
+        end
+      end
+
+      describe "when trying to add to the wrong journal type" do
+        let(:poetry_journal) { create(:journal, :poetry) }
+
+        it "renders a JSON response with errors for the new professional_development_entry" do
+          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: poetry_journal.id })
+          post professional_development_entries_path, params: { professional_development_entry: attributes, token: jwt }, headers: headers
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to match(%r{application/json}i)
+          expect(response.body).to match(/wrong journal entry type/i)
+        end
       end
     end
   end
@@ -122,13 +158,56 @@ RSpec.describe "ProfessionalDevelopmentEntries", type: :request do
         expect(json["goalProgress"]).to eq new_attributes[:goal_progress]
         expect(json["celebrations"]).to eq new_attributes[:celebrations]
       end
+
+      describe "when missing journal_entry_attributes" do
+        it "does not update the requested professional_development_entry" do
+          expect { put professional_development_entry_path(professional_development_entry.id), params: { professional_development_entry: new_attributes, token: jwt }, headers: headers }.to_not change {
+            professional_development_entry.journal_entry.id
+          }
+        end
+      end
+
+      describe "when moving it to a journal of the correct type" do
+        let(:professional_development_journal) { create(:journal, :professional_development) }
+
+        it "moves the entry to that journal" do
+          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: professional_development_journal.id })
+          put professional_development_entry_path(professional_development_entry.id), params: { professional_development_entry: attributes, token: jwt }, headers: headers
+          professional_development_entry.reload
+          expect(professional_development_entry.journal_entry.journal.id).to eq(professional_development_journal.id)
+        end
+      end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the professional_development_entry" do
-        put professional_development_entry_path(professional_development_entry.id), params: { professional_development_entry: invalid_attributes, token: jwt }, headers: headers
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to match(%r{application/json}i)
+      describe "when missing poetry entry data" do
+        it "renders a JSON response with errors for the new professional_development_entry" do
+          put professional_development_entry_path(professional_development_entry.id), params: { professional_development_entry: invalid_attributes, token: jwt }, headers: headers
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to match(%r{application/json}i)
+        end
+      end
+
+      describe "when trying to update it to a nil journal" do
+        it "renders a JSON response with errors for the new professional_development_entry" do
+          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: nil })
+          put professional_development_entry_path(professional_development_entry.id), params: { professional_development_entry: attributes, token: jwt }, headers: headers
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to match(%r{application/json}i)
+          expect(response.body).to match(/must exist/i)
+        end
+      end
+
+      describe "when trying to move it to the wrong journal type" do
+        let(:poetry_journal) { create(:journal, :poetry) }
+
+        it "renders a JSON response with errors for the new professional_development_entry" do
+          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: poetry_journal.id })
+          put professional_development_entry_path(professional_development_entry.id), params: { professional_development_entry: attributes, token: jwt }, headers: headers
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to match(%r{application/json}i)
+          expect(response.body).to match(/wrong journal entry type/i)
+        end
       end
     end
   end
