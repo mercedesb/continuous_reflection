@@ -20,7 +20,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
   let(:invalid_attributes) { attributes_for(:professional_development_content).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id }) }
 
   describe "GET /professional_development_contents" do
-    let!(:professional_development_content) { create(:professional_development_content) }
+    let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     it "returns a success response" do
       get professional_development_contents_path, params: { token: jwt }, headers: headers
@@ -40,7 +40,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
   end
 
   describe "GET /professional_development_contents/:id" do
-    let!(:professional_development_content) { create(:professional_development_content) }
+    let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     it "returns a success response" do
       get professional_development_content_path(professional_development_content.id), params: { token: jwt }, headers: headers
@@ -97,9 +97,9 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
         it "renders a JSON response with errors for the new professional_development_content" do
           attributes = valid_attributes.except(:journal_entry_attributes)
           post professional_development_contents_path, params: { professional_development_content: attributes, token: jwt }, headers: headers
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:bad_request)
           expect(response.content_type).to match(%r{application/json}i)
-          expect(response.body).to match(/journal can't be blank/i)
+          expect(response.body).to match(/param is missing/i)
         end
       end
 
@@ -107,9 +107,9 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
         it "renders a JSON response with errors for the new professional_development_content" do
           attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: nil })
           post professional_development_contents_path, params: { professional_development_content: attributes, token: jwt }, headers: headers
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:bad_request)
           expect(response.content_type).to match(%r{application/json}i)
-          expect(response.body).to match(/must exist/i)
+          expect(response.body).to match(/value is empty/i)
         end
       end
 
@@ -128,7 +128,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
   end
 
   describe "PUT /professional_development_content/:id" do
-    let!(:professional_development_content) { create(:professional_development_content) }
+    let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     context "with valid params" do
       let(:new_attributes) { attributes_for(:professional_development_content) }
@@ -213,7 +213,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
   end
 
   describe "DELETE /professional_development_content/:id" do
-    let!(:professional_development_content) { create(:professional_development_content) }
+    let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     it "destroys the requested professional_development_content" do
       expect do

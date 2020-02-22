@@ -10,7 +10,6 @@ RSpec.describe PoetryContent, type: :model do
   describe "validations" do
     it { is_expected.to validate_presence_of(:title) }
     it { is_expected.to validate_presence_of(:poem) }
-    it { is_expected.to validate_presence_of(:journal_entry).with_message("journal can't be blank") }
     it { is_expected.to accept_nested_attributes_for(:journal_entry).allow_destroy(true) }
   end
 end

@@ -16,7 +16,7 @@ class PoetryContentsController < ApplicationController
   # POST /poetry_contents
   # POST /poetry_contents.json
   def create
-    @poetry_content = PoetryContent.new(poetry_content_params)
+    @poetry_content = PoetryContent.new(poetry_content_create_params)
 
     if @poetry_content.save
       render :show, status: :created, location: @poetry_content
@@ -51,5 +51,11 @@ class PoetryContentsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def poetry_content_params
     params.fetch(:poetry_content, {}).permit(:title, :poem, journal_entry_attributes: %i[journal_id])
+  end
+
+  def poetry_content_create_params
+    permitted_params = poetry_content_params
+    permitted_params.require(:journal_entry_attributes).require(:journal_id)
+    permitted_params
   end
 end

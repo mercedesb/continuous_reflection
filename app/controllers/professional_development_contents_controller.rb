@@ -16,7 +16,7 @@ class ProfessionalDevelopmentContentsController < ApplicationController
   # POST /professional_development_contents
   # POST /professional_development_contents.json
   def create
-    @professional_development_content = ProfessionalDevelopmentContent.new(professional_development_content_params)
+    @professional_development_content = ProfessionalDevelopmentContent.new(professional_development_content_create_params)
 
     if @professional_development_content.save
       render :show, status: :created, location: @professional_development_content
@@ -51,5 +51,11 @@ class ProfessionalDevelopmentContentsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def professional_development_content_params
     params.fetch(:professional_development_content, {}).permit(:title, :mood, :today_i_learned, :goal_progress, :celebrations, journal_entry_attributes: %i[journal_id])
+  end
+
+  def professional_development_content_create_params
+    permitted_params = professional_development_content_params
+    permitted_params.require(:journal_entry_attributes).require(:journal_id)
+    permitted_params
   end
 end

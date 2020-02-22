@@ -20,7 +20,7 @@ RSpec.describe "PoetryContents", type: :request do
   let(:invalid_attributes) { attributes_for(:poetry_content).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id }) }
 
   describe "GET /poetry_contents" do
-    let!(:poetry_content) { create(:poetry_content) }
+    let!(:poetry_content) { create(:poetry_content, :with_entry) }
 
     it "returns a success response" do
       get poetry_contents_path, params: { token: jwt }, headers: headers
@@ -37,7 +37,7 @@ RSpec.describe "PoetryContents", type: :request do
   end
 
   describe "GET /poetry_contents/:id" do
-    let!(:poetry_content) { create(:poetry_content) }
+    let!(:poetry_content) { create(:poetry_content, :with_entry) }
 
     it "returns a success response" do
       get poetry_content_path(poetry_content.id), params: { token: jwt }, headers: headers
@@ -88,9 +88,9 @@ RSpec.describe "PoetryContents", type: :request do
         it "renders a JSON response with errors for the new poetry_content" do
           attributes = valid_attributes.except(:journal_entry_attributes)
           post poetry_contents_path, params: { poetry_content: attributes, token: jwt }, headers: headers
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:bad_request)
           expect(response.content_type).to match(%r{application/json}i)
-          expect(response.body).to match(/journal can't be blank/i)
+          expect(response.body).to match(/param is missing/i)
         end
       end
 
@@ -98,9 +98,9 @@ RSpec.describe "PoetryContents", type: :request do
         it "renders a JSON response with errors for the new poetry_content" do
           attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: nil })
           post poetry_contents_path, params: { poetry_content: attributes, token: jwt }, headers: headers
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:bad_request)
           expect(response.content_type).to match(%r{application/json}i)
-          expect(response.body).to match(/must exist/i)
+          expect(response.body).to match(/value is empty/i)
         end
       end
 
@@ -119,7 +119,7 @@ RSpec.describe "PoetryContents", type: :request do
   end
 
   describe "PUT /poetry_content/:id" do
-    let!(:poetry_content) { create(:poetry_content) }
+    let!(:poetry_content) { create(:poetry_content, :with_entry) }
 
     context "with valid params" do
       let(:new_attributes) { attributes_for(:poetry_content) }
@@ -198,7 +198,7 @@ RSpec.describe "PoetryContents", type: :request do
   end
 
   describe "DELETE /poetry_content/:id" do
-    let!(:poetry_content) { create(:poetry_content) }
+    let!(:poetry_content) { create(:poetry_content, :with_entry) }
 
     it "destroys the requested poetry_content" do
       expect do

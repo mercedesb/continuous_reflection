@@ -8,8 +8,10 @@ FactoryBot.define do
     goal_progress { Faker::Lorem.paragraph(sentence_count: 2) }
     celebrations { Faker::Lorem.paragraph(sentence_count: 2) }
 
-    after(:build) do |content|
-      content.journal_entry = build(:journal_entry, :professional_development, content: content)
+    trait :with_entry do
+      after(:build) do |content|
+        content.journal_entry = build(:journal_entry, :professional_development, content: content)
+      end
     end
   end
 end
