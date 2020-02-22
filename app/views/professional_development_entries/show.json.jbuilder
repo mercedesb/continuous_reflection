@@ -1,0 +1,1 @@
+json.partial! "professional_development_entries/professional_development_entry", professional_development_entry: @professional_development_entry

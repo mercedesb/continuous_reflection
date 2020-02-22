@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+json.id professional_development_entry.id
+json.title professional_development_entry.title
+json.mood professional_development_entry.mood
+json.todayILearned professional_development_entry.today_i_learned
+json.goalProgress professional_development_entry.goal_progress
+json.celebrations professional_development_entry.celebrations
+json.created_at professional_development_entry.created_at
+json.updated_at professional_development_entry.updated_at
+json.url professional_development_entry_url(professional_development_entry, format: :json)
