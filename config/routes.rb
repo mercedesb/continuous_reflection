@@ -3,7 +3,7 @@
 Rails.application.routes.draw do
   resources :poetry_entries
   resources :journal_entries
-  resources :professional_development_entries
+  resources :professional_development_contents
   resources :journals
   resources :users
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html

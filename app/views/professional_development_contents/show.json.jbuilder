@@ -1,0 +1,3 @@
+# frozen_string_literal: true
+
+json.partial! "professional_development_contents/professional_development_content", professional_development_content: @professional_development_content

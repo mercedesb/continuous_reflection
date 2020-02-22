@@ -7,7 +7,7 @@ class JournalEntry < ApplicationRecord
   validate :entry_type_must_match_journal_template
 
   VALID_CONTENT = {
-    Journal::Template::PROFESSIONAL_DEVELOPMENT => [ProfessionalDevelopmentEntry.name],
+    Journal::Template::PROFESSIONAL_DEVELOPMENT => [ProfessionalDevelopmentContent.name],
     Journal::Template::POETRY => [PoetryEntry.name]
   }.freeze
 

@@ -3,11 +3,11 @@
 FactoryBot.define do
   factory :journal_entry do
     association :journal, :professional_development
-    content { build(:professional_development_entry) }
+    content { build(:professional_development_content) }
 
     trait :professional_development do
       association :journal, :professional_development
-      content { build(:professional_development_entry) }
+      content { build(:professional_development_content) }
     end
 
     trait :poetry do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ProfessionalDevelopmentEntry < ApplicationRecord
+class ProfessionalDevelopmentContent < ApplicationRecord
   module Mood
     CHEERFUL = "cheerful"
     HOPEFUL = "hopeful"

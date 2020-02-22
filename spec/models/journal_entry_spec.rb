@@ -13,7 +13,7 @@ RSpec.describe JournalEntry, type: :model do
       let(:journal) { build(:journal, :poetry) }
 
       describe "when content_type is not in allowed list for journal template" do
-        let(:prof_dev_entry) { build(:professional_development_entry) }
+        let(:prof_dev_entry) { build(:professional_development_content) }
         subject { build(:journal_entry, journal: journal, content: prof_dev_entry) }
 
         it 'is validated' do
