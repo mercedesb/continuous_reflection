@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :poetry_entries
   resources :journal_entries
   resources :professional_development_entries
   resources :journals
