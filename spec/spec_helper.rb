@@ -13,7 +13,28 @@
 # a separate helper file that requires the additional dependencies and performs
 # the additional setup, and require it from the spec files that actually need
 # it.
-#
+
+require "simplecov"
+require "simplecov-rcov"
+
+SimpleCov.formatters = [SimpleCov::Formatter::HTMLFormatter, SimpleCov::Formatter::RcovFormatter]
+files_to_exclude = [
+  "/app/controllers/application_controller.rb",
+  "/app/jobs/application_job.rb",
+  "/app/mailers/application_mailer.rb",
+  "/app/models/lists.rb",
+  "/app/services/qualifiers/clients/sftp_client.rb"
+]
+
+SimpleCov.start "rails" do
+  add_filter "/bin/"
+  add_filter "/db/"
+  add_filter "/spec/" # for rspec
+  files_to_exclude.each do |file|
+    add_filter file
+  end
+end
+
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

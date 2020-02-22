@@ -28,7 +28,9 @@
 
 # Ignore spec analysis
 spec/examples.txt
+coverage
 
 # Ignore env files
 .env
 .env.*
+
