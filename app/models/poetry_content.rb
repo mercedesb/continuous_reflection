@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PoetryEntry < ApplicationRecord
+class PoetryContent < ApplicationRecord
   has_one :journal_entry, as: :content, validate: true, dependent: :destroy
 
   validates_presence_of :title, :poem

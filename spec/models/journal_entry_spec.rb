@@ -23,8 +23,8 @@ RSpec.describe JournalEntry, type: :model do
       end
 
       describe "when content_type is in allowed list for journal template" do
-        let(:poetry_entry) { build(:poetry_entry) }
-        subject { build(:journal_entry, journal: journal, content: poetry_entry) }
+        let(:poetry_content) { build(:poetry_content) }
+        subject { build(:journal_entry, journal: journal, content: poetry_content) }
 
         it 'is validated' do
           expect(subject.valid?).to eq true

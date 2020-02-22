@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe PoetryEntry, type: :model do
+RSpec.describe PoetryContent, type: :model do
   describe "associations" do
     it { is_expected.to have_one(:journal_entry) }
   end

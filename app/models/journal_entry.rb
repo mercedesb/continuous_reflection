@@ -8,7 +8,7 @@ class JournalEntry < ApplicationRecord
 
   VALID_CONTENT = {
     Journal::Template::PROFESSIONAL_DEVELOPMENT => [ProfessionalDevelopmentContent.name],
-    Journal::Template::POETRY => [PoetryEntry.name]
+    Journal::Template::POETRY => [PoetryContent.name]
   }.freeze
 
   def entry_type_must_match_journal_template

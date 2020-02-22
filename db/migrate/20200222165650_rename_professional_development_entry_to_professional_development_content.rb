@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-class RenameProfessionalDevelopmentContentToProfessionalDevelopmentContent < ActiveRecord::Migration[6.0]
-  def change
-    def self.up
-      rename_table :professional_development_contents, :professional_development_content
+class RenameProfessionalDevelopmentEntryToProfessionalDevelopmentContent < ActiveRecord::Migration[6.0]
+  def self.up
+    rename_table :professional_development_entries, :professional_development_contents
   end
 
-    def self.down
-      rename_table :professional_development_content, :professional_development_contents
-    end
+  def self.down
+    rename_table :professional_development_contents, :professional_development_entries
   end
 end

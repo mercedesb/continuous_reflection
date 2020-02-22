@@ -12,7 +12,7 @@ FactoryBot.define do
 
     trait :poetry do
       association :journal, :poetry
-      content { build(:poetry_entry) }
+      content { build(:poetry_content) }
     end
   end
 end

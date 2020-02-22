@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :poetry_entry do
+  factory :poetry_content do
     title { Faker::Lorem.sentence(word_count: 3) }
     poem { Faker::Lorem.paragraph(sentence_count: 2) }
 
