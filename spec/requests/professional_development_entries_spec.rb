@@ -37,7 +37,7 @@ RSpec.describe "ProfessionalDevelopmentEntries", type: :request do
     end
   end
 
-  describe "GET /professional_development/entries/:id" do
+  describe "GET /professional_development_entries/:id" do
     let!(:professional_development_entry) { create(:professional_development_entry) }
 
     it "returns a success response" do
