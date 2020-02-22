@@ -23,8 +23,8 @@ class Authenticator
   def fetch_github_access_token(code)
     resp = @connection.post ENV['GITHUB_ACCESS_TOKEN_URL'],
                             code: code,
-                            client_id: ENV['CLIENT_ID'],
-                            client_secret: ENV['CLIENT_SECRET']
+                            client_id: ENV['GITHUB_CLIENT_ID'],
+                            client_secret: ENV['GITHUB_CLIENT_SECRET']
     raise IOError, 'FETCH_ACCESS_TOKEN' unless resp.success?
 
     URI.decode_www_form(resp.body).to_h
