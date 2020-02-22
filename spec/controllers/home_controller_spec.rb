@@ -2,26 +2,18 @@
 
 require 'rails_helper'
 
-RSpec.describe HomeController, type: :request do
-  let(:headers) do
-    {
-      'ACCEPT' => 'application/json',     # This is what Rails 4 accepts
-      'HTTP_ACCEPT' => 'application/json' # This is what Rails 3 accepts
-    }
+RSpec.describe HomeController, type: :controller do
+  before do
+    request.accept = "application/json"
   end
-  let(:json) { JSON.parse(response.body) }
 
-  describe 'home' do
-    it 'has a success status' do
-      get '/home', params: {}, headers: headers
+  let(:current_user) { create(:user) }
+  let(:jwt) { AuthToken.encode(current_user.username) }
 
-      expect(response.content_type).to match(%r{application/json}i)
-      expect(response).to have_http_status(:ok)
-    end
-
-    it 'returns the expected json' do
-      get '/home', params: {}, headers: headers
-      expect(json['success']).to be true
+  describe 'GET #index' do
+    it 'returns a success response' do
+      get :index, params: { token: jwt }
+      expect(response).to be_successful
     end
   end
 end
