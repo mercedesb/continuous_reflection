@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 class AuthenticationController < ApplicationController
+  skip_before_action :authenticate_user!, only: %i[github]
+
   def github
+    require "pry"; binding.pry
     authenticator = Authenticator.new
     user_info = authenticator.github(params[:code])
 

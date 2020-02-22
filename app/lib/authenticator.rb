@@ -6,6 +6,7 @@ class Authenticator
   end
 
   def github(code)
+    require "pry"; binding.pry
     access_token_resp = fetch_github_access_token(code)
     access_token = access_token_resp['access_token']
     user_info_resp = fetch_github_user_info(access_token)
