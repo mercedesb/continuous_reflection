@@ -29,8 +29,8 @@ RSpec.describe "JournalEntries", type: :request do
           get journal_entries_path, params: { token: jwt }, headers: headers
           entry = json[0]
           expect(entry.key?("id")).to be true
-          expect(entry["content_id"]).to eq journal_entry.content_id
-          expect(entry["content_type"]).to eq journal_entry.content_type
+          expect(entry["contentId"]).to eq journal_entry.content_id
+          expect(entry["contentIdType"]).to eq journal_entry.content_type
           expect(entry.key?("content")).to eq true
 
           content = entry["content"]
@@ -50,8 +50,8 @@ RSpec.describe "JournalEntries", type: :request do
           get journal_entries_path, params: { token: jwt }, headers: headers
           entry = json[0]
           expect(entry.key?("id")).to be true
-          expect(entry["content_id"]).to eq journal_entry.content_id
-          expect(entry["content_type"]).to eq journal_entry.content_type
+          expect(entry["contentId"]).to eq journal_entry.content_id
+          expect(entry["contentIdType"]).to eq journal_entry.content_type
           expect(entry.key?("content")).to eq true
 
           content = entry["content"]
@@ -117,8 +117,8 @@ RSpec.describe "JournalEntries", type: :request do
         it "returns the expected JSON" do
           get journal_entry_path(journal_entry.id), params: { token: jwt }, headers: headers
           expect(json.key?("id")).to be true
-          expect(json["content_id"]).to eq journal_entry.content_id
-          expect(json["content_type"]).to eq journal_entry.content_type
+          expect(json["contentId"]).to eq journal_entry.content_id
+          expect(json["contentIdType"]).to eq journal_entry.content_type
           expect(json.key?("content")).to eq true
 
           content = json["content"]
@@ -137,8 +137,8 @@ RSpec.describe "JournalEntries", type: :request do
         it "returns the expected JSON" do
           get journal_entry_path(journal_entry.id), params: { token: jwt }, headers: headers
           expect(json.key?("id")).to be true
-          expect(json["content_id"]).to eq journal_entry.content_id
-          expect(json["content_type"]).to eq journal_entry.content_type
+          expect(json["contentId"]).to eq journal_entry.content_id
+          expect(json["contentIdType"]).to eq journal_entry.content_type
           expect(json.key?("content")).to eq true
 
           content = json["content"]
