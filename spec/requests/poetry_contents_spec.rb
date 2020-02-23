@@ -31,6 +31,7 @@ RSpec.describe "PoetryContents", type: :request do
       get poetry_contents_path, params: { token: jwt }, headers: headers
       entry = json[0]
       expect(entry.key?("id")).to be true
+      expect(entry.key?("journalEntryId")).to be true
       expect(entry["title"]).to eq poetry_content.title
       expect(entry["poem"]).to eq poetry_content.poem
     end
@@ -47,6 +48,7 @@ RSpec.describe "PoetryContents", type: :request do
     it "returns the expected JSON" do
       get poetry_content_path(poetry_content.id), params: { token: jwt }, headers: headers
       expect(json.key?("id")).to be true
+      expect(json["journalEntryId"]).to eq poetry_content.journal_entry.id
       expect(json["title"]).to eq poetry_content.title
       expect(json["poem"]).to eq poetry_content.poem
     end
@@ -70,6 +72,7 @@ RSpec.describe "PoetryContents", type: :request do
       it "returns the expected JSON" do
         post poetry_contents_path, params: { poetry_content: valid_attributes, token: jwt }, headers: headers
         expect(json.key?("id")).to be true
+        expect(json.key?("journalEntryId")).to be true
         expect(json["title"]).to eq valid_attributes[:title]
         expect(json["poem"]).to eq valid_attributes[:poem]
       end
@@ -140,6 +143,7 @@ RSpec.describe "PoetryContents", type: :request do
       it "returns the expected JSON" do
         put poetry_content_path(poetry_content.id), params: { poetry_content: new_attributes, token: jwt }, headers: headers
         expect(json.key?("id")).to be true
+        expect(json.key?("journalEntryId")).to be true
         expect(json["title"]).to eq new_attributes[:title]
         expect(json["poem"]).to eq new_attributes[:poem]
       end

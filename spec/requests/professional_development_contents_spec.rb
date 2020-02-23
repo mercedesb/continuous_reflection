@@ -31,6 +31,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
       get professional_development_contents_path, params: { token: jwt }, headers: headers
       entry = json[0]
       expect(entry.key?("id")).to be true
+      expect(entry["journalEntryId"]).to eq professional_development_content.journal_entry.id
       expect(entry["title"]).to eq professional_development_content.title
       expect(entry["mood"]).to eq professional_development_content.mood
       expect(entry["todayILearned"]).to eq professional_development_content.today_i_learned
@@ -50,6 +51,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
     it "returns the expected JSON" do
       get professional_development_content_path(professional_development_content.id), params: { token: jwt }, headers: headers
       expect(json.key?("id")).to be true
+      expect(json["journalEntryId"]).to eq professional_development_content.journal_entry.id
       expect(json["title"]).to eq professional_development_content.title
       expect(json["mood"]).to eq professional_development_content.mood
       expect(json["todayILearned"]).to eq professional_development_content.today_i_learned
@@ -76,6 +78,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
       it "returns the expected JSON" do
         post professional_development_contents_path, params: { professional_development_content: valid_attributes, token: jwt }, headers: headers
         expect(json.key?("id")).to be true
+        expect(json.key?("journalEntryId")).to be true
         expect(json["title"]).to eq valid_attributes[:title]
         expect(json["mood"]).to eq valid_attributes[:mood]
         expect(json["todayILearned"]).to eq valid_attributes[:today_i_learned]
@@ -152,6 +155,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
       it "returns the expected JSON" do
         put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt }, headers: headers
         expect(json.key?("id")).to be true
+        expect(json.key?("journalEntryId")).to be true
         expect(json["title"]).to eq new_attributes[:title]
         expect(json["mood"]).to eq new_attributes[:mood]
         expect(json["todayILearned"]).to eq new_attributes[:today_i_learned]
