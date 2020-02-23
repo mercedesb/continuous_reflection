@@ -12,7 +12,6 @@ module AuthToken
   end
 
   def self.decode(token)
-    require "pry"; binding.pry
     options = {
       iss: ENV['CLIENT_URL'],
       verify_iss: true,
