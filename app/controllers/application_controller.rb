@@ -9,7 +9,7 @@ class ApplicationController < ActionController::API
 
   def current_user
     payload = AuthToken.decode(token)
-    @current_user ||= User.find_by(username: payload[0]['sub'])
+    @current_user ||= User.find_by(username: payload[0]['sub']) if payload.present?
   end
 
   def logged_in?

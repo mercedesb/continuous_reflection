@@ -20,5 +20,7 @@ module AuthToken
       algorithm: 'HS256'
     }
     JWT.decode token, ENV['JWT_SECRET'], true, options
+  rescue JWT::ExpiredSignature, JWT::DecodeError
+    nil
   end
 end
