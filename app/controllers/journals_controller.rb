@@ -6,13 +6,13 @@ class JournalsController < ApplicationController
   # GET /journals
   # GET /journals.json
   def index
-    @journals = Journal.where(user: current_user)
+    @journals = Journal.includes(journal_entries: :content).where(user: current_user)
   end
 
   # GET /journals/1
   # GET /journals/1.json
   def show
-    @journal = Journal.where(user: current_user).find(params[:id])
+    @journal = Journal.includes(journal_entries: :content).where(user: current_user).find(params[:id])
   end
 
   # POST /journals
@@ -51,6 +51,6 @@ class JournalsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def journal_params
-    params.fetch(:journal, {}).permit(:name, :template)
+    params.fetch(:journal, {}).permit(:name, :template, :user_id)
   end
 end

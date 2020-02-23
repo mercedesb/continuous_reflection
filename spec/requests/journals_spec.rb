@@ -45,7 +45,7 @@ RSpec.describe "Journals", type: :request do
       end
     end
 
-    describe "when the logged in user does not have any entries" do
+    describe "when the logged in user does not have any journal_entries" do
       let!(:journal_entry) { create(:journal_entry) }
 
       it "returns an empty array" do
@@ -68,7 +68,22 @@ RSpec.describe "Journals", type: :request do
         get journal_path(journal.id), params: { token: jwt }, headers: headers
         expect(json.key?("id")).to be true
         expect(json["name"]).to eq journal.name
+        expect(json["template"]).to eq journal.template
+        expect(json["journalEntries"]).to eq journal.journal_entries.map { |e| { id: e.id } }
         expect(json["userId"]).to eq journal.user_id
+      end
+
+      describe "when the journal has journal_entries" do
+        let!(:entry) { create(:journal_entry, journal: journal) }
+
+        it "returns the expected JSON" do
+          get journal_path(journal.id), params: { token: jwt }, headers: headers
+          expect(json.key?("id")).to be true
+          expect(json["name"]).to eq journal.name
+          expect(json["template"]).to eq journal.template
+          expect(json["journalEntries"]).to eq journal.journal_entries.map { |e| { id: e.id }.stringify_keys }
+          expect(json["userId"]).to eq journal.user_id
+        end
       end
     end
 
@@ -107,6 +122,8 @@ RSpec.describe "Journals", type: :request do
         post journals_path, params: { journal: valid_attributes, token: jwt }, headers: headers
         expect(json.key?("id")).to be true
         expect(json["name"]).to eq valid_attributes[:name]
+        expect(json["template"]).to eq valid_attributes[:template]
+        expect(json["journalEntries"]).to eq []
         expect(json["userId"]).to eq current_user.id
       end
     end
@@ -143,6 +160,8 @@ RSpec.describe "Journals", type: :request do
         put journal_path(journal.id), params: { journal: new_attributes, token: jwt }, headers: headers
         expect(json.key?("id")).to be true
         expect(json["name"]).to eq new_attributes[:name]
+        expect(json["template"]).to eq new_attributes[:template]
+        expect(json.key?("journalEntries")).to be true
         expect(json["user_id"]).to eq new_attributes[:user_id]
       end
     end
