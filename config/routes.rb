@@ -14,4 +14,5 @@ Rails.application.routes.draw do
   end
 
   get '/auth/github', to: 'authentication#github', format: false
+  get '/options/mood', to: 'options#mood'
 end
