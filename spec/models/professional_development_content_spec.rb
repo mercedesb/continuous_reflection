@@ -9,7 +9,7 @@ RSpec.describe ProfessionalDevelopmentContent, type: :model do
 
   describe "validations" do
     it { is_expected.to validate_presence_of(:title) }
-    it { is_expected.to validate_inclusion_of(:mood).in_array(ProfessionalDevelopmentContent::Mood.all).allow_nil }
+    it { is_expected.to validate_inclusion_of(:mood).in_array(ProfessionalDevelopmentContent::Mood.all).allow_blank }
     it { is_expected.to accept_nested_attributes_for(:journal_entry).allow_destroy(true) }
   end
 end
