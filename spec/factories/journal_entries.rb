@@ -4,6 +4,7 @@ FactoryBot.define do
   factory :journal_entry do
     journal { create(:journal) }
     content { build(JournalEntry::VALID_CONTENT[journal.template].sample.underscore.to_sym) }
+    entry_date { Faker::Date.between(from: 2.days.ago, to: Date.today) }
 
     trait :professional_development do
       association :journal, :professional_development

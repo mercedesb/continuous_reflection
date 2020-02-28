@@ -81,7 +81,7 @@ RSpec.describe "Journals", type: :request do
           expect(json.key?("id")).to be true
           expect(json["name"]).to eq journal.name
           expect(json["template"]).to eq journal.template
-          expect(json["journalEntries"]).to eq journal.journal_entries.map { |e| { id: e.id }.stringify_keys }
+          expect(json["journalEntries"]).to eq journal.journal_entries.map { |e| { id: e.id, title: e.content.title }.stringify_keys }
           expect(json["userId"]).to eq journal.user_id
         end
       end

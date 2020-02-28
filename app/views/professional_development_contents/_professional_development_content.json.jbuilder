@@ -2,6 +2,7 @@
 
 json.id professional_development_content.id
 json.journalEntryId professional_development_content.journal_entry.id
+json.entryDate professional_development_content.journal_entry.entry_date
 json.title professional_development_content.title
 json.mood professional_development_content.mood
 json.todayILearned professional_development_content.today_i_learned

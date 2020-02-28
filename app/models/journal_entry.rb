@@ -4,6 +4,7 @@ class JournalEntry < ApplicationRecord
   belongs_to :journal
   belongs_to :content, polymorphic: true
 
+  validates_presence_of :entry_date
   validate :entry_type_must_match_journal_template
 
   VALID_CONTENT = {

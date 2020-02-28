@@ -12,11 +12,11 @@ RSpec.describe ProfessionalDevelopmentContentsController, type: :controller do
 
   let(:journal) { create(:journal, :professional_development) }
 
-  let(:valid_attributes) { attributes_for(:professional_development_content).merge!(journal_entry_attributes: { journal_id: journal.id }) }
-  let(:invalid_attributes) { attributes_for(:professional_development_content).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id }) }
+  let(:valid_attributes) { attributes_for(:professional_development_content).merge!(journal_entry_attributes: { journal_id: journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) }) }
+  let(:invalid_attributes) { attributes_for(:professional_development_content).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) }) }
 
   describe "GET #index" do
-    let!(:professional_development_content) { create(:professional_development_content) }
+    let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     it "returns a success response" do
       get :index, params: { token: jwt }
@@ -30,7 +30,7 @@ RSpec.describe ProfessionalDevelopmentContentsController, type: :controller do
   end
 
   describe "GET #show" do
-    let!(:professional_development_content) { create(:professional_development_content) }
+    let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     it "returns a success response" do
       get :show, params: { id: professional_development_content.to_param, token: jwt }
@@ -65,7 +65,7 @@ RSpec.describe ProfessionalDevelopmentContentsController, type: :controller do
   end
 
   describe "PUT #update" do
-    let!(:professional_development_content) { create(:professional_development_content) }
+    let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     context "with valid params" do
       let(:new_attributes) { attributes_for(:professional_development_content) }
@@ -91,7 +91,7 @@ RSpec.describe ProfessionalDevelopmentContentsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let!(:professional_development_content) { create(:professional_development_content) }
+    let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     it "returns a success response" do
       delete :destroy, params: { id: professional_development_content.to_param, token: jwt }

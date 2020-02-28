@@ -9,6 +9,8 @@ RSpec.describe JournalEntry, type: :model do
   end
 
   describe "validations" do
+    it { is_expected.to validate_presence_of(:entry_date) }
+
     describe "entry_type_must_match_journal_template" do
       let(:journal) { build(:journal, :poetry) }
 

@@ -20,7 +20,7 @@ RSpec.describe JournalsController, type: :controller do
   end
 
   describe "GET #index" do
-    let!(:journal) { create(:journal) }
+    let!(:journal) { create(:journal, user: current_user) }
 
     it "returns a success response" do
       get :index, params: { token: jwt }
@@ -34,7 +34,7 @@ RSpec.describe JournalsController, type: :controller do
   end
 
   describe "GET #show" do
-    let!(:journal) { create(:journal) }
+    let!(:journal) { create(:journal, user: current_user) }
 
     it "returns a success response" do
       get :show, params: { id: journal.to_param, token: jwt }

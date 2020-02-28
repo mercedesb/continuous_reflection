@@ -16,8 +16,8 @@ RSpec.describe "PoetryContents", type: :request do
 
   let(:journal) { create(:journal, :poetry) }
 
-  let(:valid_attributes) { attributes_for(:poetry_content).merge!(journal_entry_attributes: { journal_id: journal.id }) }
-  let(:invalid_attributes) { attributes_for(:poetry_content).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id }) }
+  let(:valid_attributes) { attributes_for(:poetry_content).merge!(journal_entry_attributes: { journal_id: journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) }) }
+  let(:invalid_attributes) { attributes_for(:poetry_content).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) }) }
 
   describe "GET /poetry_contents" do
     let!(:poetry_content) { create(:poetry_content, :with_entry) }
@@ -30,6 +30,7 @@ RSpec.describe "PoetryContents", type: :request do
     it "returns the expected JSON" do
       get poetry_contents_path, params: { token: jwt }, headers: headers
       entry = json[0]
+      expect(entry["entryDate"]).to eq poetry_content.journal_entry.entry_date.to_s
       expect(entry.key?("id")).to be true
       expect(entry.key?("journalEntryId")).to be true
       expect(entry["title"]).to eq poetry_content.title
@@ -47,6 +48,7 @@ RSpec.describe "PoetryContents", type: :request do
 
     it "returns the expected JSON" do
       get poetry_content_path(poetry_content.id), params: { token: jwt }, headers: headers
+      expect(json["entryDate"]).to eq poetry_content.journal_entry.entry_date.to_s
       expect(json.key?("id")).to be true
       expect(json["journalEntryId"]).to eq poetry_content.journal_entry.id
       expect(json["title"]).to eq poetry_content.title
@@ -73,6 +75,7 @@ RSpec.describe "PoetryContents", type: :request do
         post poetry_contents_path, params: { poetry_content: valid_attributes, token: jwt }, headers: headers
         expect(json.key?("id")).to be true
         expect(json.key?("journalEntryId")).to be true
+        expect(json["entryDate"]).to eq valid_attributes[:journal_entry_attributes][:entry_date].to_s
         expect(json["title"]).to eq valid_attributes[:title]
         expect(json["poem"]).to eq valid_attributes[:poem]
       end
@@ -111,7 +114,7 @@ RSpec.describe "PoetryContents", type: :request do
         let(:prof_dev_journal) { create(:journal, :professional_development) }
 
         it "renders a JSON response with errors for the new poetry_content" do
-          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: prof_dev_journal.id })
+          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: prof_dev_journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) })
           post poetry_contents_path, params: { poetry_content: attributes, token: jwt }, headers: headers
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to match(%r{application/json}i)
@@ -125,11 +128,12 @@ RSpec.describe "PoetryContents", type: :request do
     let!(:poetry_content) { create(:poetry_content, :with_entry) }
 
     context "with valid params" do
-      let(:new_attributes) { attributes_for(:poetry_content) }
+      let(:new_attributes) { attributes_for(:poetry_content).merge(journal_entry_attributes: { journal_id: poetry_content.journal_entry.journal_id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) }) }
 
       it "updates the requested poetry_content" do
         put poetry_content_path(poetry_content.id), params: { poetry_content: new_attributes, token: jwt }, headers: headers
         poetry_content.reload
+        expect(poetry_content.journal_entry.entry_date).to eq(new_attributes[:journal_entry_attributes][:entry_date])
         expect(poetry_content.title).to eq(new_attributes[:title])
         expect(poetry_content.poem).to eq(new_attributes[:poem])
       end
@@ -144,6 +148,7 @@ RSpec.describe "PoetryContents", type: :request do
         put poetry_content_path(poetry_content.id), params: { poetry_content: new_attributes, token: jwt }, headers: headers
         expect(json.key?("id")).to be true
         expect(json.key?("journalEntryId")).to be true
+        expect(json["entryDate"]).to eq new_attributes[:journal_entry_attributes][:entry_date].to_s
         expect(json["title"]).to eq new_attributes[:title]
         expect(json["poem"]).to eq new_attributes[:poem]
       end
@@ -160,7 +165,7 @@ RSpec.describe "PoetryContents", type: :request do
         let(:poetry_journal) { create(:journal, :poetry) }
 
         it "moves the entry to that journal" do
-          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: poetry_journal.id })
+          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: poetry_journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) })
           put poetry_content_path(poetry_content.id), params: { poetry_content: attributes, token: jwt }, headers: headers
           poetry_content.reload
           expect(poetry_content.journal_entry.journal.id).to eq(poetry_journal.id)
@@ -191,7 +196,7 @@ RSpec.describe "PoetryContents", type: :request do
         let(:prof_dev_journal) { create(:journal, :professional_development) }
 
         it "renders a JSON response with errors for the new poetry_content" do
-          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: prof_dev_journal.id })
+          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: prof_dev_journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) })
           put poetry_content_path(poetry_content.id), params: { poetry_content: attributes, token: jwt }, headers: headers
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to match(%r{application/json}i)

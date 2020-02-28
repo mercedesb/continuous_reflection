@@ -50,12 +50,12 @@ class ProfessionalDevelopmentContentsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def professional_development_content_params
-    params.fetch(:professional_development_content, {}).permit(:title, :mood, :today_i_learned, :goal_progress, :celebrations, journal_entry_attributes: %i[journal_id])
+    params.fetch(:professional_development_content, {}).permit(:title, :mood, :today_i_learned, :goal_progress, :celebrations, journal_entry_attributes: %i[journal_id entry_date])
   end
 
   def professional_development_content_create_params
     permitted_params = professional_development_content_params
-    permitted_params.require(:journal_entry_attributes).require(:journal_id)
+    permitted_params.require(:journal_entry_attributes).require(%i[journal_id entry_date])
     permitted_params
   end
 end

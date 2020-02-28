@@ -30,7 +30,7 @@ RSpec.describe "JournalEntries", type: :request do
           entry = json[0]
           expect(entry.key?("id")).to be true
           expect(entry["contentId"]).to eq journal_entry.content_id
-          expect(entry["contentIdType"]).to eq journal_entry.content_type
+          expect(entry["contentType"]).to eq journal_entry.content_type
           expect(entry.key?("content")).to eq true
 
           content = entry["content"]
@@ -51,7 +51,7 @@ RSpec.describe "JournalEntries", type: :request do
           entry = json[0]
           expect(entry.key?("id")).to be true
           expect(entry["contentId"]).to eq journal_entry.content_id
-          expect(entry["contentIdType"]).to eq journal_entry.content_type
+          expect(entry["contentType"]).to eq journal_entry.content_type
           expect(entry.key?("content")).to eq true
 
           content = entry["content"]
@@ -118,7 +118,7 @@ RSpec.describe "JournalEntries", type: :request do
           get journal_entry_path(journal_entry.id), params: { token: jwt }, headers: headers
           expect(json.key?("id")).to be true
           expect(json["contentId"]).to eq journal_entry.content_id
-          expect(json["contentIdType"]).to eq journal_entry.content_type
+          expect(json["contentType"]).to eq journal_entry.content_type
           expect(json.key?("content")).to eq true
 
           content = json["content"]
@@ -138,7 +138,7 @@ RSpec.describe "JournalEntries", type: :request do
           get journal_entry_path(journal_entry.id), params: { token: jwt }, headers: headers
           expect(json.key?("id")).to be true
           expect(json["contentId"]).to eq journal_entry.content_id
-          expect(json["contentIdType"]).to eq journal_entry.content_type
+          expect(json["contentType"]).to eq journal_entry.content_type
           expect(json.key?("content")).to eq true
 
           content = json["content"]

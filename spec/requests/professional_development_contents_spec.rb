@@ -16,8 +16,8 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
 
   let(:journal) { create(:journal, :professional_development) }
 
-  let(:valid_attributes) { attributes_for(:professional_development_content).merge!(journal_entry_attributes: { journal_id: journal.id }) }
-  let(:invalid_attributes) { attributes_for(:professional_development_content).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id }) }
+  let(:valid_attributes) { attributes_for(:professional_development_content).merge!(journal_entry_attributes: { journal_id: journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) }) }
+  let(:invalid_attributes) { attributes_for(:professional_development_content).merge!(title: nil).merge!(journal_entry_attributes: { journal_id: journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) }) }
 
   describe "GET /professional_development_contents" do
     let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
@@ -31,6 +31,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
       get professional_development_contents_path, params: { token: jwt }, headers: headers
       entry = json[0]
       expect(entry.key?("id")).to be true
+      expect(entry["entryDate"]).to eq professional_development_content.journal_entry.entry_date.to_s
       expect(entry["journalEntryId"]).to eq professional_development_content.journal_entry.id
       expect(entry["title"]).to eq professional_development_content.title
       expect(entry["mood"]).to eq professional_development_content.mood
@@ -51,6 +52,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
     it "returns the expected JSON" do
       get professional_development_content_path(professional_development_content.id), params: { token: jwt }, headers: headers
       expect(json.key?("id")).to be true
+      expect(json["entryDate"]).to eq professional_development_content.journal_entry.entry_date.to_s
       expect(json["journalEntryId"]).to eq professional_development_content.journal_entry.id
       expect(json["title"]).to eq professional_development_content.title
       expect(json["mood"]).to eq professional_development_content.mood
@@ -79,6 +81,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
         post professional_development_contents_path, params: { professional_development_content: valid_attributes, token: jwt }, headers: headers
         expect(json.key?("id")).to be true
         expect(json.key?("journalEntryId")).to be true
+        expect(json["entryDate"]).to eq valid_attributes[:journal_entry_attributes][:entry_date].to_s
         expect(json["title"]).to eq valid_attributes[:title]
         expect(json["mood"]).to eq valid_attributes[:mood]
         expect(json["todayILearned"]).to eq valid_attributes[:today_i_learned]
@@ -120,7 +123,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
         let(:poetry_journal) { create(:journal, :poetry) }
 
         it "renders a JSON response with errors for the new professional_development_content" do
-          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: poetry_journal.id })
+          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: poetry_journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) })
           post professional_development_contents_path, params: { professional_development_content: attributes, token: jwt }, headers: headers
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to match(%r{application/json}i)
@@ -134,11 +137,12 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
     let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     context "with valid params" do
-      let(:new_attributes) { attributes_for(:professional_development_content) }
+      let(:new_attributes) { attributes_for(:professional_development_content).merge(journal_entry_attributes: { journal_id: professional_development_content.journal_entry.journal_id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) }) }
 
       it "updates the requested professional_development_content" do
         put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt }, headers: headers
         professional_development_content.reload
+        expect(professional_development_content.journal_entry.entry_date).to eq(new_attributes[:journal_entry_attributes][:entry_date])
         expect(professional_development_content.title).to eq(new_attributes[:title])
         expect(professional_development_content.mood).to eq(new_attributes[:mood])
         expect(professional_development_content.today_i_learned).to eq(new_attributes[:today_i_learned])
@@ -156,6 +160,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
         put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt }, headers: headers
         expect(json.key?("id")).to be true
         expect(json.key?("journalEntryId")).to be true
+        expect(json["entryDate"]).to eq new_attributes[:journal_entry_attributes][:entry_date].to_s
         expect(json["title"]).to eq new_attributes[:title]
         expect(json["mood"]).to eq new_attributes[:mood]
         expect(json["todayILearned"]).to eq new_attributes[:today_i_learned]
@@ -175,7 +180,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
         let(:professional_development_journal) { create(:journal, :professional_development) }
 
         it "moves the entry to that journal" do
-          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: professional_development_journal.id })
+          attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: professional_development_journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) })
           put professional_development_content_path(professional_development_content.id), params: { professional_development_content: attributes, token: jwt }, headers: headers
           professional_development_content.reload
           expect(professional_development_content.journal_entry.journal.id).to eq(professional_development_journal.id)
