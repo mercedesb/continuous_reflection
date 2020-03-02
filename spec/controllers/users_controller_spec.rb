@@ -3,10 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe UsersController, type: :controller do
-  before do
-    request.accept = "application/json"
-  end
-
   let(:current_user) { create(:user) }
   let(:jwt) { AuthToken.encode(current_user.username) }
 
