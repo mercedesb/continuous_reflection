@@ -3,20 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe "JournalEntries", type: :request do
-  let(:headers) do
-    {
-      'ACCEPT' => 'application/json',     # This is what Rails 4 accepts
-      'HTTP_ACCEPT' => 'application/json' # This is what Rails 3 accepts
-    }
-  end
-
   let(:current_user) { create(:user) }
   let(:jwt) { AuthToken.encode(current_user.username) }
   let(:json) { JSON.parse(response.body) }
 
   describe "GET /journal_entries" do
     it "returns a success response" do
-      get journal_entries_path, params: { token: jwt }, headers: headers
+      get journal_entries_path, params: { token: jwt }
       expect(response).to have_http_status(200)
     end
 
@@ -26,7 +19,7 @@ RSpec.describe "JournalEntries", type: :request do
         let!(:journal_entry) { create(:journal_entry, :professional_development, journal: journal) }
 
         it "returns the expected JSON" do
-          get journal_entries_path, params: { token: jwt }, headers: headers
+          get journal_entries_path, params: { token: jwt }
           entry = json[0]
           expect(entry.key?("id")).to be true
           expect(entry["contentId"]).to eq journal_entry.content_id
@@ -47,7 +40,7 @@ RSpec.describe "JournalEntries", type: :request do
         let!(:journal_entry) { create(:journal_entry, :poetry, journal: journal) }
 
         it "returns the expected JSON" do
-          get journal_entries_path, params: { token: jwt }, headers: headers
+          get journal_entries_path, params: { token: jwt }
           entry = json[0]
           expect(entry.key?("id")).to be true
           expect(entry["contentId"]).to eq journal_entry.content_id
@@ -66,7 +59,7 @@ RSpec.describe "JournalEntries", type: :request do
         let!(:journal_entry_2) { create(:journal_entry) }
 
         it "returns only entries for the logged in user" do
-          get journal_entries_path, params: { token: jwt }, headers: headers
+          get journal_entries_path, params: { token: jwt }
           expect(json.pluck("id")).to match_array([journal_entry.id])
         end
 
@@ -74,7 +67,7 @@ RSpec.describe "JournalEntries", type: :request do
           let!(:journal_entry_3) { create(:journal_entry, journal: build(:journal, user: current_user, template: journal.template)) }
 
           it "returns only entries of that type for the logged in user" do
-            get journal_entries_path, params: { token: jwt }, headers: headers
+            get journal_entries_path, params: { token: jwt }
             expect(json.pluck("id")).to match_array([journal_entry.id, journal_entry_3.id])
           end
         end
@@ -83,7 +76,7 @@ RSpec.describe "JournalEntries", type: :request do
           let!(:journal_entry_3) { create(:journal_entry, journal: journal) }
 
           it "returns only entries of that type for the logged in user" do
-            get journal_entries_path, params: { token: jwt }, headers: headers
+            get journal_entries_path, params: { token: jwt }
             expect(json.pluck("id")).to match_array([journal_entry.id, journal_entry_3.id])
           end
         end
@@ -94,7 +87,7 @@ RSpec.describe "JournalEntries", type: :request do
       let!(:journal_entry) { create(:journal_entry) }
 
       it "returns an empty array" do
-        get journal_entries_path, params: { token: jwt }, headers: headers
+        get journal_entries_path, params: { token: jwt }
         expect(json).to eq []
       end
     end
@@ -106,7 +99,7 @@ RSpec.describe "JournalEntries", type: :request do
       let!(:journal_entry) { create(:journal_entry, journal: journal) }
 
       it "returns a success response" do
-        get journal_entry_path(journal_entry.id), params: { token: jwt }, headers: headers
+        get journal_entry_path(journal_entry.id), params: { token: jwt }
         expect(response).to be_successful
       end
 
@@ -115,7 +108,7 @@ RSpec.describe "JournalEntries", type: :request do
         let!(:journal_entry) { create(:journal_entry, :professional_development, journal: journal) }
 
         it "returns the expected JSON" do
-          get journal_entry_path(journal_entry.id), params: { token: jwt }, headers: headers
+          get journal_entry_path(journal_entry.id), params: { token: jwt }
           expect(json.key?("id")).to be true
           expect(json["contentId"]).to eq journal_entry.content_id
           expect(json["contentType"]).to eq journal_entry.content_type
@@ -135,7 +128,7 @@ RSpec.describe "JournalEntries", type: :request do
         let!(:journal_entry) { create(:journal_entry, :poetry, journal: journal) }
 
         it "returns the expected JSON" do
-          get journal_entry_path(journal_entry.id), params: { token: jwt }, headers: headers
+          get journal_entry_path(journal_entry.id), params: { token: jwt }
           expect(json.key?("id")).to be true
           expect(json["contentId"]).to eq journal_entry.content_id
           expect(json["contentType"]).to eq journal_entry.content_type
@@ -152,7 +145,7 @@ RSpec.describe "JournalEntries", type: :request do
       let!(:journal_entry) { create(:journal_entry) }
 
       it "returns a not found response" do
-        get journal_entry_path(journal_entry.id), params: { token: jwt }, headers: headers
+        get journal_entry_path(journal_entry.id), params: { token: jwt }
         expect(response).to_not be_successful
         expect(response).to have_http_status(:not_found)
       end

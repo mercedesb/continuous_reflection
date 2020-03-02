@@ -3,13 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe "ProfessionalDevelopmentContents", type: :request do
-  let(:headers) do
-    {
-      'ACCEPT' => 'application/json',     # This is what Rails 4 accepts
-      'HTTP_ACCEPT' => 'application/json' # This is what Rails 3 accepts
-    }
-  end
-
   let(:current_user) { create(:user) }
   let(:jwt) { AuthToken.encode(current_user.username) }
   let(:json) { JSON.parse(response.body) }
@@ -23,12 +16,12 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
     let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     it "returns a success response" do
-      get professional_development_contents_path, params: { token: jwt }, headers: headers
+      get professional_development_contents_path, params: { token: jwt }
       expect(response).to have_http_status(200)
     end
 
     it "returns the expected JSON" do
-      get professional_development_contents_path, params: { token: jwt }, headers: headers
+      get professional_development_contents_path, params: { token: jwt }
       entry = json[0]
       expect(entry.key?("id")).to be true
       expect(entry["entryDate"]).to eq professional_development_content.journal_entry.entry_date.to_s
@@ -45,12 +38,12 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
     let!(:professional_development_content) { create(:professional_development_content, :with_entry) }
 
     it "returns a success response" do
-      get professional_development_content_path(professional_development_content.id), params: { token: jwt }, headers: headers
+      get professional_development_content_path(professional_development_content.id), params: { token: jwt }
       expect(response).to be_successful
     end
 
     it "returns the expected JSON" do
-      get professional_development_content_path(professional_development_content.id), params: { token: jwt }, headers: headers
+      get professional_development_content_path(professional_development_content.id), params: { token: jwt }
       expect(json.key?("id")).to be true
       expect(json["entryDate"]).to eq professional_development_content.journal_entry.entry_date.to_s
       expect(json["journalEntryId"]).to eq professional_development_content.journal_entry.id
@@ -66,19 +59,19 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
     context "with valid params" do
       it "creates a new ProfessionalDevelopmentContent" do
         expect do
-          post professional_development_contents_path, params: { professional_development_content: valid_attributes, token: jwt }, headers: headers
+          post professional_development_contents_path, params: { professional_development_content: valid_attributes, token: jwt }
         end.to change(ProfessionalDevelopmentContent, :count).by(1)
       end
 
       it "renders a JSON response with the new professional_development_content" do
-        post professional_development_contents_path, params: { professional_development_content: valid_attributes, token: jwt }, headers: headers
+        post professional_development_contents_path, params: { professional_development_content: valid_attributes, token: jwt }
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(%r{application/json}i)
         expect(response.location).to eq(professional_development_content_url(ProfessionalDevelopmentContent.last))
       end
 
       it "returns the expected JSON" do
-        post professional_development_contents_path, params: { professional_development_content: valid_attributes, token: jwt }, headers: headers
+        post professional_development_contents_path, params: { professional_development_content: valid_attributes, token: jwt }
         expect(json.key?("id")).to be true
         expect(json.key?("journalEntryId")).to be true
         expect(json["entryDate"]).to eq valid_attributes[:journal_entry_attributes][:entry_date].to_s
@@ -93,7 +86,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
     context "with invalid params" do
       describe "when missing professional development entry data" do
         it "renders a JSON response with errors for the new professional_development_content" do
-          post professional_development_contents_path, params: { professional_development_content: invalid_attributes, token: jwt }, headers: headers
+          post professional_development_contents_path, params: { professional_development_content: invalid_attributes, token: jwt }
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to match(%r{application/json}i)
         end
@@ -102,7 +95,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
       describe "when missing journal_entry_attributes" do
         it "renders a JSON response with errors for the new professional_development_content" do
           attributes = valid_attributes.except(:journal_entry_attributes)
-          post professional_development_contents_path, params: { professional_development_content: attributes, token: jwt }, headers: headers
+          post professional_development_contents_path, params: { professional_development_content: attributes, token: jwt }
           expect(response).to have_http_status(:bad_request)
           expect(response.content_type).to match(%r{application/json}i)
           expect(response.body).to match(/param is missing/i)
@@ -112,7 +105,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
       describe "when missing which journal to add it to" do
         it "renders a JSON response with errors for the new professional_development_content" do
           attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: nil })
-          post professional_development_contents_path, params: { professional_development_content: attributes, token: jwt }, headers: headers
+          post professional_development_contents_path, params: { professional_development_content: attributes, token: jwt }
           expect(response).to have_http_status(:bad_request)
           expect(response.content_type).to match(%r{application/json}i)
           expect(response.body).to match(/value is empty/i)
@@ -124,7 +117,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
 
         it "renders a JSON response with errors for the new professional_development_content" do
           attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: poetry_journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) })
-          post professional_development_contents_path, params: { professional_development_content: attributes, token: jwt }, headers: headers
+          post professional_development_contents_path, params: { professional_development_content: attributes, token: jwt }
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to match(%r{application/json}i)
           expect(response.body).to match(/wrong journal entry type/i)
@@ -140,7 +133,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
       let(:new_attributes) { attributes_for(:professional_development_content).merge(journal_entry_attributes: { journal_id: professional_development_content.journal_entry.journal_id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) }) }
 
       it "updates the requested professional_development_content" do
-        put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt }, headers: headers
+        put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt }
         professional_development_content.reload
         expect(professional_development_content.journal_entry.entry_date).to eq(new_attributes[:journal_entry_attributes][:entry_date])
         expect(professional_development_content.title).to eq(new_attributes[:title])
@@ -151,13 +144,13 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
       end
 
       it "renders a JSON response with the professional_development_content" do
-        put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt }, headers: headers
+        put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt }
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to match(%r{application/json}i)
       end
 
       it "returns the expected JSON" do
-        put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt }, headers: headers
+        put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt }
         expect(json.key?("id")).to be true
         expect(json.key?("journalEntryId")).to be true
         expect(json["entryDate"]).to eq new_attributes[:journal_entry_attributes][:entry_date].to_s
@@ -170,7 +163,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
 
       describe "when missing journal_entry_attributes" do
         it "does not update the requested professional_development_content" do
-          expect { put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt }, headers: headers }.to_not change {
+          expect { put professional_development_content_path(professional_development_content.id), params: { professional_development_content: new_attributes, token: jwt } }.to_not change {
             professional_development_content.journal_entry.id
           }
         end
@@ -181,7 +174,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
 
         it "moves the entry to that journal" do
           attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: professional_development_journal.id, entry_date: Faker::Date.between(from: 2.days.ago, to: Date.today) })
-          put professional_development_content_path(professional_development_content.id), params: { professional_development_content: attributes, token: jwt }, headers: headers
+          put professional_development_content_path(professional_development_content.id), params: { professional_development_content: attributes, token: jwt }
           professional_development_content.reload
           expect(professional_development_content.journal_entry.journal.id).to eq(professional_development_journal.id)
         end
@@ -191,7 +184,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
     context "with invalid params" do
       describe "when missing poetry entry data" do
         it "renders a JSON response with errors for the new professional_development_content" do
-          put professional_development_content_path(professional_development_content.id), params: { professional_development_content: invalid_attributes, token: jwt }, headers: headers
+          put professional_development_content_path(professional_development_content.id), params: { professional_development_content: invalid_attributes, token: jwt }
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to match(%r{application/json}i)
         end
@@ -200,7 +193,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
       describe "when trying to update it to a nil journal" do
         it "renders a JSON response with errors for the new professional_development_content" do
           attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: nil })
-          put professional_development_content_path(professional_development_content.id), params: { professional_development_content: attributes, token: jwt }, headers: headers
+          put professional_development_content_path(professional_development_content.id), params: { professional_development_content: attributes, token: jwt }
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to match(%r{application/json}i)
           expect(response.body).to match(/must exist/i)
@@ -212,7 +205,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
 
         it "renders a JSON response with errors for the new professional_development_content" do
           attributes = valid_attributes.merge(journal_entry_attributes: { journal_id: poetry_journal.id })
-          put professional_development_content_path(professional_development_content.id), params: { professional_development_content: attributes, token: jwt }, headers: headers
+          put professional_development_content_path(professional_development_content.id), params: { professional_development_content: attributes, token: jwt }
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to match(%r{application/json}i)
           expect(response.body).to match(/wrong journal entry type/i)
@@ -226,7 +219,7 @@ RSpec.describe "ProfessionalDevelopmentContents", type: :request do
 
     it "destroys the requested professional_development_content" do
       expect do
-        delete professional_development_content_path(professional_development_content.id), params: { token: jwt }, headers: headers
+        delete professional_development_content_path(professional_development_content.id), params: { token: jwt }
       end.to change(ProfessionalDevelopmentContent, :count).by(-1)
     end
   end

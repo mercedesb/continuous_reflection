@@ -16,6 +16,7 @@
 
 require "simplecov"
 require "simplecov-rcov"
+require "active_support/concern"
 
 SimpleCov.formatters = [SimpleCov::Formatter::HTMLFormatter, SimpleCov::Formatter::RcovFormatter]
 files_to_exclude = [
@@ -32,6 +33,27 @@ SimpleCov.start "rails" do
   add_filter "/spec/" # for rspec
   files_to_exclude.each do |file|
     add_filter file
+  end
+end
+
+# make all request specs default to application/json
+# from this SO answer: https://stackoverflow.com/a/39399215
+module DefaultFormat
+  extend ActiveSupport::Concern
+
+  included do
+    let(:default_format) { 'application/json' }
+    prepend RequestHelpersCustomized
+  end
+
+  module RequestHelpersCustomized
+    l = lambda do |path, **kwarg|
+      kwarg[:headers] = { accept: default_format }.merge(kwarg[:headers] || {})
+      super(path, **kwarg)
+    end
+    %w[get post patch put delete].each do |method|
+      define_method(method, l)
+    end
   end
 end
 
@@ -119,4 +141,6 @@ RSpec.configure do |config|
   config.before(:each, type: :controller) do
     request.accept = "application/json" if defined? request
   end
+
+  config.include DefaultFormat, type: :request
 end
