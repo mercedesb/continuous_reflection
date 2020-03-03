@@ -12,4 +12,19 @@ RSpec.describe HomeController, type: :controller do
       expect(response).to be_successful
     end
   end
+
+  describe "GET #journal_entries" do
+    let(:journal) { create(:journal, user: current_user) }
+    let!(:journal_entry) { create(:journal_entry, journal: journal) }
+
+    it "returns a success response" do
+      get :journal_entries, params: { token: jwt, journal_ids: [journal.id].join(",") }
+      expect(response).to be_successful
+    end
+
+    it "assigns @journal_entries" do
+      get :journal_entries, params: { token: jwt, journal_ids: [journal.id].join(",") }
+      expect(subject.view_assigns["journal_entries"]).to eq([journal_entry])
+    end
+  end
 end

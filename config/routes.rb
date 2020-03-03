@@ -2,10 +2,10 @@
 
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  root to: 'home#index'
-
   defaults format: :json do
+    root to: 'home#index'
     get '/home/index', to: 'home#index'
+    get '/home/journal_entries', to: 'home#journal_entries'
     resources :poetry_contents
     resources :journal_entries
     resources :professional_development_contents
