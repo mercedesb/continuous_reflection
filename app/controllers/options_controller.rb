@@ -2,6 +2,6 @@
 
 class OptionsController < ApplicationController
   def mood
-    @moods = ProfessionalDevelopmentContent::Mood.all
+    @moods = ProfessionalDevelopmentContent::Mood.options
   end
 end

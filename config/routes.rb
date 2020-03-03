@@ -11,8 +11,8 @@ Rails.application.routes.draw do
     resources :professional_development_contents
     resources :journals
     resources :users
+    get '/options/mood', to: 'options#mood'
   end
 
   get '/auth/github', to: 'authentication#github', format: false
-  get '/options/mood', to: 'options#mood'
 end
