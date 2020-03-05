@@ -12,7 +12,7 @@ gem 'jwt', '~> 2.2.1'
 # Use postgres as the database for Active Record
 gem 'pg', '~> 1.2.2'
 # Use Puma as the app server
-gem 'puma', '~> 4.1'
+gem 'puma', '~> 4.3'
 gem 'rails', '~> 6.0.2', '>= 6.0.2.1'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
