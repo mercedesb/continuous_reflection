@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     root to: 'home#index'
     get '/home/index', to: 'home#index'
     get '/home/journal_entries', to: 'home#journal_entries'
+    resources :dashboards
     resources :poetry_contents
     resources :journal_entries
     resources :professional_development_contents

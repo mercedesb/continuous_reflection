@@ -10,5 +10,6 @@ json.journalEntries journal.journal_entries.order(entry_date: :desc) do |entry|
   json.entryDate entry.entry_date
 end
 json.createdAt journal.created_at
+json.createdAt journal.created_at
 json.updatedAt journal.updated_at
 json.url journal_url(journal, format: :json)

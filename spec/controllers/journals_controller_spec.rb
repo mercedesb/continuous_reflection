@@ -6,7 +6,7 @@ RSpec.describe JournalsController, type: :controller do
   let(:current_user) { create(:user) }
   let(:jwt) { AuthToken.encode(current_user.username) }
 
-  let(:valid_attributes) { attributes_for(:journal).merge!(user_id: current_user.id) }
+  let(:valid_attributes) { attributes_for(:journal) }
 
   let(:invalid_attributes) do
     {
