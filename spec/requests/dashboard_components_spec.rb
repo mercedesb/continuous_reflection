@@ -7,7 +7,7 @@ RSpec.describe "DashboardComponents", type: :request do
   let(:jwt) { AuthToken.encode(current_user.username) }
   let(:json) { JSON.parse(response.body) }
 
-  let(:valid_attributes) { attributes_for(:dashboard_component).merge!(dashboard_id: create(:dashboard, user: current_user).id).merge!(journal_id: create(:journal, user: current_user).id) }
+  let(:valid_attributes) { attributes_for(:dashboard_component).merge!(journal_ids: [create(:journal, user: current_user).id]) }
   let(:invalid_attributes) { attributes_for(:dashboard_component).merge!(component_type: nil) }
 
   describe "GET /dashboard_components" do
@@ -32,8 +32,8 @@ RSpec.describe "DashboardComponents", type: :request do
         expect(ret_dashboard_component.key?("id")).to be true
         expect(ret_dashboard_component.key?("componentType")).to be true
         expect(ret_dashboard_component["componentType"]).to eq dashboard_component.component_type
-        expect(ret_dashboard_component.key?("journalId")).to be true
-        expect(ret_dashboard_component["journalId"]).to eq dashboard_component.journal.id
+        expect(ret_dashboard_component.key?("journals")).to be true
+        expect(ret_dashboard_component["journals"]).to be_kind_of(Array)
         expect(ret_dashboard_component.key?("position")).to be true
         expect(ret_dashboard_component["position"]).to eq dashboard_component.position
       end
@@ -55,8 +55,8 @@ RSpec.describe "DashboardComponents", type: :request do
         expect(json.key?("id")).to be true
         expect(json.key?("componentType")).to be true
         expect(json["componentType"]).to eq dashboard_component.component_type
-        expect(json.key?("journalId")).to be true
-        expect(json["journalId"]).to eq dashboard_component.journal.id
+        expect(json.key?("journals")).to be true
+        expect(json["journals"]).to be_kind_of(Array)
         expect(json.key?("position")).to be true
         expect(json["position"]).to eq dashboard_component.position
       end
@@ -109,8 +109,10 @@ RSpec.describe "DashboardComponents", type: :request do
         expect(json.key?("id")).to be true
         expect(json.key?("componentType")).to be true
         expect(json["componentType"]).to eq valid_attributes[:component_type]
-        expect(json.key?("journalId")).to be true
-        expect(json["journalId"]).to eq valid_attributes[:journal_id]
+        expect(json.key?("journals")).to be true
+        expect(json["journals"]).to be_kind_of(Array)
+        journal_json = json["journals"][0]
+        expect(journal_json["id"]).to eq valid_attributes[:journal_ids][0]
         expect(json.key?("position")).to be true
         expect(json["position"]).to eq valid_attributes[:position]
       end
@@ -130,7 +132,7 @@ RSpec.describe "DashboardComponents", type: :request do
     let!(:dashboard_component) { create(:dashboard_component, dashboard: dashboard) }
 
     context "with valid params" do
-      let(:new_attributes) { attributes_for(:dashboard_component).merge!(dashboard_id: create(:dashboard, user: current_user).id).merge!(journal_id: create(:journal, user: current_user).id) }
+      let(:new_attributes) { attributes_for(:dashboard_component).merge!(journal_ids: [create(:journal, user: current_user).id]) }
 
       it "updates the requested dashboard_component" do
         put dashboard_component_path(dashboard_component.id), params: { dashboard_component: new_attributes, token: jwt }
@@ -150,8 +152,10 @@ RSpec.describe "DashboardComponents", type: :request do
         expect(json.key?("id")).to be true
         expect(json.key?("componentType")).to be true
         expect(json["componentType"]).to eq new_attributes[:component_type]
-        expect(json.key?("journalId")).to be true
-        expect(json["journalId"]).to eq new_attributes[:journal_id]
+        expect(json.key?("journals")).to be true
+        expect(json["journals"]).to be_kind_of(Array)
+        journal_json = json["journals"][0]
+        expect(journal_json["id"]).to eq new_attributes[:journal_ids][0]
         expect(json.key?("position")).to be true
         expect(json["position"]).to eq new_attributes[:position]
       end

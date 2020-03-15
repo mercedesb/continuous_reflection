@@ -19,7 +19,12 @@ class DashboardComponentsController < ApplicationController
   # POST /dashboard_components.json
   def create
     dashboard = Dashboard.find_or_create_by(user_id: current_user.id)
-    @dashboard_component = DashboardComponent.new(dashboard_component_params.merge(dashboard_id: dashboard.id))
+    @dashboard_component = DashboardComponent.new(dashboard_component_params.except(:journal_ids).merge(dashboard_id: dashboard.id))
+
+    journals = Journal.where(id: dashboard_component_params[:journal_ids])
+    journals.each do |journal|
+      @dashboard_component.dashboard_component_journals << DashboardComponentJournal.new(journal: journal)
+    end
 
     if @dashboard_component.save
       render :show, status: :created, location: @dashboard_component
@@ -53,6 +58,6 @@ class DashboardComponentsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def dashboard_component_params
-    params.fetch(:dashboard_component, {}).permit(:journal_id, :component_type, :position, :dashboard_id)
+    params.fetch(:dashboard_component, {}).permit(:component_type, :position, :dashboard_id, journal_ids: [])
   end
 end

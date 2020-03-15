@@ -20,22 +20,8 @@ RSpec.describe DashboardsController, type: :controller do
       expect(response).to be_successful
     end
 
-    it "assigns @dashboards" do
-      get :index, params: { token: jwt }
-      expect(subject.view_assigns["dashboards"]).to eq([dashboard])
-    end
-  end
-
-  describe "GET #show" do
-    let!(:dashboard) { create(:dashboard, user: current_user) }
-
-    it "returns a success response" do
-      get :show, params: { id: dashboard.to_param, token: jwt }
-      expect(response).to be_successful
-    end
-
     it "assigns @dashboard" do
-      get :show, params: { id: dashboard.to_param, token: jwt }
+      get :index, params: { token: jwt }
       expect(subject.view_assigns["dashboard"]).to eq(dashboard)
     end
   end

@@ -10,14 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_06_140321) do
+ActiveRecord::Schema.define(version: 2020_03_12_004829) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "dashboard_component_journals", force: :cascade do |t|
+    t.integer "dashboard_component_id", null: false
+    t.integer "journal_id", null: false
+  end
+
   create_table "dashboard_components", force: :cascade do |t|
     t.integer "dashboard_id", null: false
-    t.integer "journal_id", null: false
     t.string "component_type", null: false
     t.integer "position", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -72,8 +76,9 @@ ActiveRecord::Schema.define(version: 2020_03_06_140321) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "dashboard_component_journals", "dashboard_components"
+  add_foreign_key "dashboard_component_journals", "journals"
   add_foreign_key "dashboard_components", "dashboards"
-  add_foreign_key "dashboard_components", "journals"
   add_foreign_key "dashboards", "users"
   add_foreign_key "journal_entries", "journals"
   add_foreign_key "journals", "users"

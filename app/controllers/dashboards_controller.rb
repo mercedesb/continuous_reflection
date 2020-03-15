@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 
 class DashboardsController < ApplicationController
-  before_action :set_dashboard, only: %i[show update destroy]
+  before_action :set_dashboard, only: %i[update destroy]
 
   # GET /dashboards
   # GET /dashboards.json
   def index
-    @dashboards = Dashboard.where(user: current_user)
-  end
-
-  # GET /dashboards/1
-  # GET /dashboards/1.json
-  def show
-    @dashboard = Dashboard.where(user: current_user).find(params[:id])
+    @dashboard = Dashboard.where(user: current_user).first
+    render json: { error: "Dashboard not found for user" }, status: :not_found if @dashboard.nil?
   end
 
   # POST /dashboards

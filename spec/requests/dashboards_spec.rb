@@ -15,48 +15,29 @@ RSpec.describe "Dashboards", type: :request do
   end
 
   describe "GET /dashboards" do
-    it "returns a success response" do
-      get dashboards_path, params: { token: jwt }
-      expect(response).to have_http_status(200)
-    end
-
-    describe "when the logged in user has dashboard(s)" do
+    describe "when the logged in user has a dashboard" do
       let!(:dashboard) { create(:dashboard, user: current_user) }
       let!(:dashboard_2) { create(:dashboard) }
-      it "only returns dashboards for the current_user" do
-        get dashboards_path, params: { token: jwt }
-        expect(json.pluck("id")).to match_array([dashboard.id])
-      end
-
-      it "returns the expected JSON" do
-        get dashboards_path, params: { token: jwt }
-        ret_dashboard = json[0]
-        expect(ret_dashboard.key?("id")).to be true
-      end
-    end
-  end
-
-  describe "GET /dashboards/:id" do
-    describe "when the requested dashboard belongs to the logged in user" do
-      let!(:dashboard) { create(:dashboard, user: current_user) }
 
       it "returns a success response" do
-        get dashboard_path(dashboard.id), params: { token: jwt }
-        expect(response).to be_successful
+        get dashboards_path, params: { token: jwt }
+        expect(response).to have_http_status(200)
+      end
+
+      it "only returns dashboards for the current_user" do
+        get dashboards_path, params: { token: jwt }
+        expect(json["id"]).to eq(dashboard.id)
       end
 
       it "returns the expected JSON" do
-        get dashboard_path(dashboard.id), params: { token: jwt }
+        get dashboards_path, params: { token: jwt }
         expect(json.key?("id")).to be true
-        expect(json["userId"]).to eq dashboard.user_id
       end
     end
 
-    describe "when the requested entry does not belong to the logged in user" do
-      let!(:dashboard) { create(:dashboard) }
-
+    describe "when the logged in user does not have a dashboard" do
       it "returns a not found response" do
-        get dashboard_path(dashboard.id), params: { token: jwt }
+        get dashboards_path, params: { token: jwt }
         expect(response).to_not be_successful
         expect(response).to have_http_status(:not_found)
       end

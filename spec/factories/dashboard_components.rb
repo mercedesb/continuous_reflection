@@ -3,7 +3,6 @@
 FactoryBot.define do
   factory :dashboard_component do
     dashboard
-    journal
     component_type { DashboardComponent::Type::JOURNAL_CALENDAR }
     position { 0 }
 
