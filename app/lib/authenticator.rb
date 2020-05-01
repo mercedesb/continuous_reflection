@@ -31,8 +31,7 @@ class Authenticator
   end
 
   def fetch_github_user_info(access_token)
-    resp = @connection.get ENV['GITHUB_USER_INFO_URL'],
-                           access_token: access_token
+    resp = @connection.get(ENV['GITHUB_USER_INFO_URL'], nil, { 'Authorization' => "token #{access_token}" })
     raise IOError, 'FETCH_USER_INFO' unless resp.success?
 
     JSON.parse(resp.body)
