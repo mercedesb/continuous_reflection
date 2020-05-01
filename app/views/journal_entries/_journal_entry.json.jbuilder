@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 json.id journal_entry.id
+json.journal do
+  json.id journal_entry.journal.id
+  json.name journal_entry.journal.name
+end
 json.contentId journal_entry.content_id
 json.contentType journal_entry.content_type
 json.content do

@@ -15,6 +15,6 @@ class DashboardComponent < ApplicationRecord
   validates :component_type, inclusion: { in: Type.all }
 
   belongs_to :dashboard
-  has_many :dashboard_component_journals
+  has_many :dashboard_component_journals, dependent: :destroy
   has_many :journals, through: :dashboard_component_journals
 end

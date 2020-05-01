@@ -22,9 +22,14 @@ RSpec.describe "JournalEntries", type: :request do
           get journal_entries_path, params: { token: jwt }
           entry = json[0]
           expect(entry.key?("id")).to be true
+          expect(entry.key?("journal")).to be true
           expect(entry["contentId"]).to eq journal_entry.content_id
           expect(entry["contentType"]).to eq journal_entry.content_type
           expect(entry.key?("content")).to eq true
+
+          journal_json = entry["journal"]
+          expect(journal_json.key?("id")).to be true
+          expect(journal_json["name"]).to eq journal.name
 
           content = entry["content"]
           expect(content["title"]).to eq journal_entry.content.title
@@ -46,6 +51,10 @@ RSpec.describe "JournalEntries", type: :request do
           expect(entry["contentId"]).to eq journal_entry.content_id
           expect(entry["contentType"]).to eq journal_entry.content_type
           expect(entry.key?("content")).to eq true
+
+          journal_json = entry["journal"]
+          expect(journal_json.key?("id")).to be true
+          expect(journal_json["name"]).to eq journal.name
 
           content = entry["content"]
           expect(content["title"]).to eq journal_entry.content.title
@@ -110,9 +119,14 @@ RSpec.describe "JournalEntries", type: :request do
         it "returns the expected JSON" do
           get journal_entry_path(journal_entry.id), params: { token: jwt }
           expect(json.key?("id")).to be true
+          expect(json.key?("journal")).to be true
           expect(json["contentId"]).to eq journal_entry.content_id
           expect(json["contentType"]).to eq journal_entry.content_type
           expect(json.key?("content")).to eq true
+
+          journal_json = json["journal"]
+          expect(journal_json.key?("id")).to be true
+          expect(journal_json["name"]).to eq journal.name
 
           content = json["content"]
           expect(content["title"]).to eq journal_entry.content.title
@@ -130,9 +144,14 @@ RSpec.describe "JournalEntries", type: :request do
         it "returns the expected JSON" do
           get journal_entry_path(journal_entry.id), params: { token: jwt }
           expect(json.key?("id")).to be true
+          expect(json.key?("journal")).to be true
           expect(json["contentId"]).to eq journal_entry.content_id
           expect(json["contentType"]).to eq journal_entry.content_type
           expect(json.key?("content")).to eq true
+
+          journal_json = json["journal"]
+          expect(journal_json.key?("id")).to be true
+          expect(journal_json["name"]).to eq journal.name
 
           content = json["content"]
           expect(content["title"]).to eq journal_entry.content.title

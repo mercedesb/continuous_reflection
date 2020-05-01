@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 json.id dashboard.id
-json.components dashboard.dashboard_components do |component|
+json.components dashboard.dashboard_components.order(:position) do |component|
   json.partial! "dashboard_components/dashboard_component", dashboard_component: component
 end
 json.userId dashboard.user_id
